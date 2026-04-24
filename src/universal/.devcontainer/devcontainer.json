@@ -65,7 +65,6 @@
         "ghcr.io/devcontainers/features/go:1": {
             "version": "latest"
         },
-        "./local-features/jekyll": "latest",
         "ghcr.io/devcontainers/features/oryx:2": "latest",
         "./local-features/setup-user": "latest",
         "./local-features/patch-python": {},
@@ -94,7 +93,6 @@
         "ghcr.io/devcontainers/features/docker-in-docker",
         "ghcr.io/devcontainers/features/kubectl-helm-minikube",
         "ghcr.io/devcontainers/features/go",
-        "./local-features/jekyll",
         "ghcr.io/devcontainers/features/oryx",
         "./local-features/setup-user",
         "ghcr.io/shengsuan/features/agent:1"

@@ -14,9 +14,6 @@
             "dotnetRuntimeVersions": "9.0", 
             "aspNetCoreRuntimeVersions": "9.0"
         },
-        "ghcr.io/devcontainers/features/hugo:1": {
-            "version": "latest"
-        },
         "ghcr.io/devcontainers/features/node:1": {
             "version": "24",
             "additionalVersions": "22"
@@ -80,7 +77,6 @@
         "ghcr.io/devcontainers/features/common-utils",
         "ghcr.io/devcontainers/features/git",
         "ghcr.io/devcontainers/features/dotnet",
-        "ghcr.io/devcontainers/features/hugo",
         "ghcr.io/devcontainers/features/node",
         "./local-features/nvs",
         "ghcr.io/devcontainers/features/python",
@@ -94,8 +90,8 @@
         "ghcr.io/devcontainers/features/kubectl-helm-minikube",
         "ghcr.io/devcontainers/features/go",
         "ghcr.io/devcontainers/features/oryx",
-        "./local-features/setup-user",
-        "ghcr.io/shengsuan/features/agent:1"
+        "ghcr.io/shengsuan/features/agent:1",
+        "./local-features/setup-user"
     ],
     "remoteUser": "codespace",
     "containerUser": "codespace",

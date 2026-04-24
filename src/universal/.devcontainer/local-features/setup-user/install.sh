@@ -54,10 +54,6 @@ ln -snf /usr/local/python /opt/python
 JAVA_PATH="/home/codespace/java/current"
 ln -snf /usr/local/sdkman/candidates/java /home/codespace
 
-RUBY_PATH="/home/${USERNAME}/.ruby/current"
-mkdir -p /home/${USERNAME}/.ruby
-ln -snf /usr/local/rvm/rubies/default $RUBY_PATH
-
 DOTNET_PATH="/home/${USERNAME}/.dotnet"
 
 # Required due to https://github.com/devcontainers/features/pull/628/files#r1276659825
@@ -74,10 +70,6 @@ cp -R /usr/share/dotnet/ThirdPartyNotices.txt /opt/dotnet/lts
 MAVEN_PATH="/home/${USERNAME}/.maven/current"
 mkdir -p /home/${USERNAME}/.maven
 ln -snf /usr/local/sdkman/candidates/maven/current $MAVEN_PATH
-
-HUGO_ROOT="/home/${USERNAME}/.hugo/current"
-mkdir -p /home/${USERNAME}/.hugo
-ln -snf /usr/local/hugo $HUGO_ROOT
 
 HOME_DIR="/home/${USERNAME}/"
 chown -R ${USERNAME}:${USERNAME} "${HOME_DIR}.php/"
@@ -99,5 +91,49 @@ if [ -f "/opt/tmp/build/createSymlinksForDotnet.sh" ]; then
 fi
 
 echo "Defaults secure_path=\"${DOTNET_PATH}:${NODE_PATH}/bin:${PHP_PATH}/bin:${PYTHON_PATH}/bin:${JAVA_PATH}/bin:${RUBY_PATH}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin:/usr/local/share:/home/${USERNAME}/.local/bin:${PATH}\"" >> /etc/sudoers.d/$USERNAME
+
+# Setup SSH authentication
+echo "Configuring SSH for user ${USERNAME}..."
+
+# Set default password for SSH login
+USER_PASSWORD="${USER_PASSWORD:-codespace}"
+echo "${USERNAME}:${USER_PASSWORD}" | chpasswd
+passwd -u "${USERNAME}" 2>/dev/null || true
+
+# Create .ssh directory with correct permissions
+USER_HOME="/home/${USERNAME}"
+mkdir -p "${USER_HOME}/.ssh"
+chmod 700 "${USER_HOME}/.ssh"
+chown -R ${USERNAME}:${USERNAME} "${USER_HOME}/.ssh"
+
+# Configure SSH to accept both password and key authentication
+SSH_CONFIG="/etc/ssh/sshd_config"
+if [ -f "${SSH_CONFIG}" ]; then
+    # Ensure SSH listens on port 22 (internal container port)
+    if grep -q "^Port" "${SSH_CONFIG}"; then
+        sed -i 's/^Port .*/Port 22/' "${SSH_CONFIG}"
+    fi
+
+    # Enable password authentication
+    if grep -q "^#*PasswordAuthentication" "${SSH_CONFIG}"; then
+        sed -i 's/^#*PasswordAuthentication.*/PasswordAuthentication yes/' "${SSH_CONFIG}"
+    else
+        echo "PasswordAuthentication yes" >> "${SSH_CONFIG}"
+    fi
+
+    # Enable public key authentication
+    if grep -q "^#*PubkeyAuthentication" "${SSH_CONFIG}"; then
+        sed -i 's/^#*PubkeyAuthentication.*/PubkeyAuthentication yes/' "${SSH_CONFIG}"
+    else
+        echo "PubkeyAuthentication yes" >> "${SSH_CONFIG}"
+    fi
+
+    # Enable keyboard interactive authentication
+    if grep -q "^KbdInteractiveAuthentication no" "${SSH_CONFIG}"; then
+        sed -i 's/^KbdInteractiveAuthentication no/KbdInteractiveAuthentication yes/' "${SSH_CONFIG}"
+    fi
+
+    echo "SSH configuration completed. User '${USERNAME}' can login with password '${USER_PASSWORD}' or SSH key."
+fi
 
 echo "Done!"

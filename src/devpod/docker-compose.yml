@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  devpod:
+    image: ${DEVPOD_IMAGE:-vsc-universal:latest}
+    container_name: devpod
+
+    restart: unless-stopped
+    ports:
+      - "${SSHD_PORT:-2222}:22"
+
+    working_dir: /workspace
+
+    environment:
+      TZ: ${TIMEZONE:-Asia/Shanghai}
+      START_SSHD: "true"
+      SSHD_PORT: "22"
+      USERNAME: ${SSH_USERNAME:-codespace}
+      NEW_PASSWORD: ${SSH_PASSWORD:?SSH_PASSWORD must be set in .env file}
+      GATEWAY_PORTS: ${GATEWAY_PORTS:-yes}
+      SHENGSUANYUN_API_KEY: ${SHENGSUANYUN_API_KEY:-none}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-none}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-none}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-none}
+      ANTHROPIC_BASE_URL: ${ANTHROPIC_BASE_URL:-none}
+      CODEX_DEFAULT_MODEL: ${CODEX_DEFAULT_MODEL:-none}
+      CLAUDE_CODE_DEFAULT_MODEL: ${CLAUDE_CODE_DEFAULT_MODEL:-none}
+      CI: "true"
+      NO_COLOR: "1"
+
+    volumes:
+      - ./workspace:/workspace
+      - vsc-home:/home/dev
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    tty: true
+    stdin_open: true
+    privileged: true
+    command: /bin/sh -c "echo \"${SSH_USERNAME}:${SSH_PASSWORD}\" | chpasswd && /usr/local/share/ssh-init.sh && /usr/local/bin/configure-agent-runtime 2>&1 | head -n 100 && tail -f /dev/null"
+
+volumes:
+  vsc-home:

@@ -41,7 +41,7 @@ services:
       /bin/sh -c "echo \"${SSH_USERNAME}:${SSH_PASSWORD}\" | chpasswd &&
       /usr/local/share/ssh-init.sh &&
       /usr/local/bin/configure-agent-runtime 2>&1 | head -n 100 &&
-      ttyd -W -p 7681 -c ${SSH_USERNAME}:${SSH_PASSWORD} bash &&
+      ttyd -W -p 7681 -c ${SSH_USERNAME}:${SSH_PASSWORD} bash 2>&1 &&
       tail -f /dev/null"
 
 volumes:

@@ -36,7 +36,12 @@ services:
     tty: true
     stdin_open: true
     privileged: true
-    command: /bin/sh -c "echo \"${SSH_USERNAME}:${SSH_PASSWORD}\" | chpasswd && /usr/local/share/ssh-init.sh && /usr/local/bin/configure-agent-runtime 2>&1 | head -n 100 && tail -f /dev/null"
+    command: /bin/sh -c "
+    echo \"${SSH_USERNAME}:${SSH_PASSWORD}\" | chpasswd &&
+    /usr/local/share/ssh-init.sh && 
+    /usr/local/bin/configure-agent-runtime 2>&1 | head -n 100 && 
+    ttyd -W -p ${TTYD_PORT:-7681} -c ${SSH_USERNAME}:${SSH_PASSWORD} bash &&
+    tail -f /dev/null"
 
 volumes:
   vsc-home:

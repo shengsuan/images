@@ -60,6 +60,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         curl \
         gettext \
         inotify-tools \
+        ttyd \
     && rm -rf /var/lib/apt/lists/* \
     # This is the folder containing 'links' to benv and build script generator
     && apt-get update \

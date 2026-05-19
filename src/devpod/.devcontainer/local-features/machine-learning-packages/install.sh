@@ -47,6 +47,7 @@ if [[ "$(python --version)" != "" ]] && [[ "$(pip --version)" != "" ]]; then
     install_python_package "torch" "--index-url https://download.pytorch.org/whl/cpu"
     install_python_package "requests"
     install_python_package "plotly"
+    install_python_package "uv"
 else
     "(*) Error: Need to install python and pip."
 fi
